@@ -1,0 +1,61 @@
+plugins {
+    id 'com.android.application'
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://nexus.scanbot.io/nexus/content/repositories/releases/' }
+    maven { url 'https://nexus.scanbot.io/nexus/content/repositories/snapshots/' }
+}
+
+android {
+    compileSdkVersion 35
+
+    defaultConfig {
+        applicationId "net.integraa.read"
+        minSdkVersion 24
+        targetSdkVersion 27
+        versionCode 22
+        versionName "22.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64", "mips"
+        }
+    }
+
+    buildTypes {
+        /*release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }*/
+        release {
+            debuggable true
+            minifyEnabled true//false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace 'net.integraa.read'
+}
+
+dependencies {
+    implementation("com.squareup.picasso:picasso:2.71828")
+
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50'
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    def sdkVersion = "7.1.2"
+    implementation("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
+    implementation("io.scanbot:rtu-ui-v2-barcode:$sdkVersion")
+    implementation("io.scanbot:barcode-sdk-pdfium:$sdkVersion")
+/*
+*/
+}

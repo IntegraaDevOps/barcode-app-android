@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_scan_root_view"
+    android:layout_width="match_parent"
+    android:background="@color/black"
+    android:layout_height="match_parent">
+
+    <!--<io.scanbot.sdk.barcode.ui.BarcodeScannerView
+        android:id="@+id/fragment_scan_barcode_scanner_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/fragment_scan_barcode_preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+
+</FrameLayout>
