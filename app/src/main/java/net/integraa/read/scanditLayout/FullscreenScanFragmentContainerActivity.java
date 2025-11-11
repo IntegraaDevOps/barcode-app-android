@@ -1,6 +1,7 @@
 package net.integraa.read.scanditLayout;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,12 +19,20 @@ import net.integraa.read.activity.ErrorActivity;
 import net.integraa.read.activity.SettingsActivity;
 import net.integraa.read.controller.Scanner;
 import net.integraa.read.dbhelper.DBHelper;
+import net.integraa.read.dbhelper.DialogHelper;
+import net.integraa.read.network.APIClient;
+import net.integraa.read.network.IntegraaApi;
+import net.integraa.read.network.LoginData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
 
@@ -50,8 +59,6 @@ public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
         //double x=5/0;
         startScanning();
 
-        Bundle bundle = new Bundle();
-
         Intent intent = getIntent();
 
         try {
@@ -65,6 +72,13 @@ public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
         //intent.putExtra("barcode_mod","single");
         //intent.putExtra("flag_avviso","0");
         //map_values.put("barcode_scanner_type","scanbot");
+
+        start(intent, savedInstanceState);
+    }
+
+    public void start(Intent intent, Bundle savedInstanceState) {
+
+        Bundle bundle = new Bundle();
 
         if ( intent.hasExtra("tipologia_modello") ){
             bundle.putBoolean("database",false);
@@ -86,6 +100,44 @@ public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
         }
 
         else if ( !intent.hasExtra("barcode_mod") ){
+            IntegraaApi integraaApi= APIClient.getClient().create(IntegraaApi.class);
+            DialogHelper.clientAccessInput(FullscreenScanFragmentContainerActivity.this, getString(R.string.user_access), "", null, new DialogHelper.DialogInputsInterface() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, String[] inputs) {
+                    if(which==DialogInterface.BUTTON_POSITIVE) {
+                        ProgressDialog progressDialog = new ProgressDialog(FullscreenScanFragmentContainerActivity.this);
+                        progressDialog.setTitle(R.string.access_waiting);
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        integraaApi.doLogin(inputs[0],inputs[1]).enqueue(new Callback<LoginData>() {
+                            @Override
+                            public void onResponse(Call<LoginData> call, Response<LoginData> response) {
+                                if (response.body()==null||!response.body().getCode().equals("0")) {
+                                    onFailure(call,null);
+                                    return;
+                                }
+                                progressDialog.dismiss();
+                                dialog.dismiss();
+                                intent.putExtra("barcode_mod","single");
+                                intent.putExtra("flag_avviso","0");
+                                map_values.put("barcode_scanner_type","scanbot");
+                                start(intent, savedInstanceState);
+                            }
+                            @Override
+                            public void onFailure(Call<LoginData> call, Throwable t) {
+                                DialogHelper.alert(FullscreenScanFragmentContainerActivity.this,"",getString(R.string.login_failed));
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                    else {
+                        finish();
+                    }
+                }
+            });
+            return;
+            /*
             AlertDialog.Builder builder = new AlertDialog.Builder(FullscreenScanFragmentContainerActivity.this, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
             builder.setTitle("Attenzione");
             builder.setMessage("L'applicazione può essere eseguita solo da IntegraaApp\n\nVersione: "+ Util.version_app);
@@ -98,6 +150,7 @@ public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
             builder.setCancelable(false);
             builder.show();
             return;
+            */
         }
 
         Scanner.setBarcodeType(map_values.getOrDefault("barcode_scanner_type",""));
@@ -139,6 +192,7 @@ public class FullscreenScanFragmentContainerActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container,fragment, null)
                     .commit();
         }
+
     }
 
     @Override

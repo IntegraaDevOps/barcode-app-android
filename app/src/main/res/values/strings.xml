@@ -1,6 +1,12 @@
 <resources>
-    <string name="app_name">Integraa Auto Lettura</string>
+    <string name="app_name">Integraa Lettura</string>
     <string name="alert">Attenzione</string>
+    <string name="user_access">Accesso Utente</string>
+    <string name="access_waiting">Accesso in corso...</string>
+    <string name="client_code">Codice Cliente</string>
+    <string name="invalid_client_code">Codice Cliente non valido</string>
     <string name="password">Password</string>
+    <string name="invalid_password">Password non valida</string>
+    <string name="login_failed">Accesso Fallito!</string>
     <string name="no_barcode_scanner_available">Nessun Lettore di Barcode Disponibile</string>
 </resources>

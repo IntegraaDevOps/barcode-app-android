@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "net.integraa.read"
         minSdkVersion 24
-        targetSdkVersion 27
+        targetSdkVersion 33
         versionCode 22
         versionName "22.0"
 
@@ -25,14 +25,17 @@ android {
     }
 
     buildTypes {
-        /*release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }*/
+        debug {
+            minifyEnabled = false
+            shrinkResources = false
+            debuggable = true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
         release {
-            debuggable true
-            minifyEnabled true//false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled = true
+            shrinkResources = true
+            debuggable = false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
     compileOptions {
@@ -51,11 +54,20 @@ dependencies {
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50'
+
+    implementation 'com.google.code.gson:gson:2.6.2'
+
+    implementation 'com.squareup.retrofit2:converter-scalars:2.0.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
     def sdkVersion = "7.1.2"
     implementation("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
     implementation("io.scanbot:rtu-ui-v2-barcode:$sdkVersion")
     implementation("io.scanbot:barcode-sdk-pdfium:$sdkVersion")
-/*
-*/
+
+    implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 }

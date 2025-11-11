@@ -13,7 +13,9 @@ import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -34,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.integraa.read.R;
+import net.integraa.read.scanditLayout.FullscreenScanFragmentContainerActivity;
 
 public class DialogHelper {
 
@@ -133,43 +136,112 @@ public class DialogHelper {
         return true;
     }
 
-    public static boolean passwordInput(Context context, String title, String message, Map<String,Object> settings, DialogInputInterface listerner) {
+    public static boolean passwordInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
         settings.put("InputType", InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        return genericInput(context, title, message, settings, listerner);
+        return genericInputs(context, title, message, settings, listerner);
     }
 
-    public static boolean integerInput(Context context, String title, String message, Map<String,Object> settings, DialogInputInterface listerner) {
+    public static boolean integerInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
         settings.put("InputType", InputType.TYPE_CLASS_NUMBER);
-        return genericInput(context, title, message, settings, listerner);
+        return genericInputs(context, title, message, settings, listerner);
     }
 
-    public static boolean genericInput(Context context, String title, String message, Map<String,Object> settings, DialogInputInterface listerner) {
+    public static boolean clientAccessInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
-        AlertDialog.Builder info = new AlertDialog.Builder(context);
+        settings.put("Alert", true);
+        settings.put("ManualDismiss", true);
+        settings.put("InputsCount", 2);
+        settings.put("Hint0", context.getString(R.string.client_code));
+        settings.put("InputType0", InputType.TYPE_CLASS_TEXT);
+        settings.put("Hint1", context.getString(R.string.password));
+        settings.put("InputType1", InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        return genericInputs(context, title, message, settings, new DialogInputsInterface() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, String[] inputs) {
+                String msg = "";
+                if(which==DialogInterface.BUTTON_POSITIVE) {
+                    if (TextUtils.isEmpty(inputs[0])) {
+                        msg+=context.getString(R.string.invalid_client_code)+"\n";
+                    }
+                    if (TextUtils.isEmpty(inputs[1])) {
+                        msg+=context.getString(R.string.invalid_password)+"\n";
+                    }
+                }
+                if (msg.isEmpty()) {
+                    listerner.onClick(dialog, which, inputs);
+                }
+                else {
+                    DialogHelper.alert(context,"",msg);
+                }
+            }
+        });
+    }
+
+    public static boolean genericInputs(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+        if(settings==null) {
+            settings=new HashMap<>();
+        }
+        if (!settings.containsKey("InputsCount")) {
+            settings.put("InputsCount","1");
+        }
+        AlertDialog.Builder info;
+        if (settings.containsKey("FullScreen")) {
+            info = new AlertDialog.Builder(context, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
+        }
+        if (settings.containsKey("Alert")) {
+            info = new AlertDialog.Builder(context, android.R.style.Theme_Material_Light_Dialog_Alert);
+        }
+        else {
+            info = new AlertDialog.Builder(context);
+        }
         info.setTitle(title);
         final TextView viewtext = new TextView(context);
         viewtext.setText(message);
         viewtext.setPadding(50,0,50,0);
-        final EditText edittext = new EditText(context);
-        if(settings.containsKey("InputType")) {
-            edittext.setInputType((Integer)settings.get("InputType"));
-        }
-        if(settings.containsKey("MaxLength")) {
-            edittext.setFilters(new InputFilter[] { new InputFilter.LengthFilter((Integer)settings.get("MaxLength")) });
-        }
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(viewtext);
-        linearLayout.addView(edittext);
+
+        int count = Integer.parseInt(settings.get("InputsCount").toString());
+        EditText[] edittexts = new EditText[count];
+        for(int i=0;i<count;i++){
+            edittexts[i]=new EditText(context);
+            for(String value:new String[]{"InputType"+i,"InputType"}) {
+                if(settings.containsKey(value)) {
+                    edittexts[i].setInputType((Integer)settings.get(value));
+                    break;
+                }
+            }
+            for(String value:new String[]{"MaxLength"+i,"MaxLength"}) {
+                if(settings.containsKey(value)) {
+                    edittexts[i].setFilters(new InputFilter[] { new InputFilter.LengthFilter((Integer)settings.get(value)) });
+                    break;
+                }
+            }
+            for(String value:new String[]{"Hint"+i,"Hint"}) {
+                if(settings.containsKey(value)) {
+                    edittexts[i].setHint(settings.get(value).toString());
+                    break;
+                }
+            }
+            for(String value:new String[]{"Text"+i,"Text"}) {
+                if(settings.containsKey(value)) {
+                    edittexts[i].setText(settings.get(value).toString());
+                    break;
+                }
+            }
+            linearLayout.addView(edittexts[i]);
+        }
+
         info.setView(linearLayout);
         Map<String, Object> finalSettings = settings;
         info.setPositiveButton(android.R.string.yes, null);
@@ -182,7 +254,11 @@ public class DialogHelper {
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listerner.onClick(dialog, DialogInterface.BUTTON_POSITIVE, edittext.getText().toString());
+                        String[] inputs = new String[count];
+                        for(int i=0;i<count;i++){
+                            inputs[i]=edittexts[i].getText().toString();
+                        }
+                        listerner.onClick(dialog, DialogInterface.BUTTON_POSITIVE, inputs);
                         if(!finalSettings.containsKey("ManualDismiss")) {
                             dialog.cancel();
                         }
@@ -262,6 +338,10 @@ public class DialogHelper {
 
     public interface DialogInputInterface {
         void onClick(DialogInterface dialog, int which, String input);
+    }
+
+    public interface DialogInputsInterface {
+        void onClick(DialogInterface dialog, int which, String[] inputs);
     }
 
     public interface EntryInterface<K,V extends Object> {
