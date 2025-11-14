@@ -2,6 +2,7 @@ package net.integraa.read.network;
 
 import java.util.Map;
 
+import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -16,7 +17,17 @@ public interface IntegraaApi {
     @Headers("Cache-Control: no-cache")
     @Multipart
     @POST("login_read")
-    Call<LoginData> doLogin(@Part("username") String username,
-                               @Part("password") String password);
+    Call<LoginData> doLogin(@Part("username") RequestBody username,
+                               @Part("password") RequestBody password);
 
+    @Headers("Cache-Control: no-cache")
+    @GET("login_read")
+    Call<ReadData> getReads(@Header("token") String token);
+
+    @Headers("Cache-Control: no-cache")
+    @Multipart
+    @POST("login_read")
+    Call<ReadData> addRead(@Header("token") String token,
+                            @Part("serial") RequestBody serial,
+                            @Part("read") RequestBody read);
 }

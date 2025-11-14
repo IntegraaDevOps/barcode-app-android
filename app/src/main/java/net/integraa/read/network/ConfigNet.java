@@ -1,6 +1,12 @@
 package net.integraa.read.network;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+
+import net.integraa.read.BuildConfig;
+import net.integraa.read.controller.Scanner;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -10,10 +16,10 @@ import java.io.FileInputStream;
 import java.net.Proxy;
 
 public class ConfigNet {
-    private static final String defaultApiHost = "apm.integraa.net";
+    private static final String defaultApiHost = "play.integraa.net";
     private static final String defaultApiProtocol = "https";
     private static final String defaultApiPath = "gestione/api/";
-    private static final String defaultWebHost = "apm.integraa.net";
+    private static final String defaultWebHost = "play.integraa.net";
     private static final String defaultWebProtocol = "https";
     private static final String defaultWebPath = "gestione/";
 
@@ -30,6 +36,17 @@ public class ConfigNet {
     private static long configTime = -1;
     protected static final String integraa_content_dir = ".content_integraa";
 
+    public static String getToken() {
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        return preferences.getString("TOKEN","");
+    }
+    public static void setToken(String value) {
+        if (value==null) {
+            return;
+        }
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        preferences.edit().putString("TOKEN",value).commit();
+    }
     public static String requestsPath(String path) {
         return Environment.getExternalStorageDirectory()+File.separator+integraa_content_dir+ File.separator+path;
     }
@@ -59,6 +76,14 @@ public class ConfigNet {
             try {
                 configTime=configFile.lastModified();
                 JSONObject obj = new JSONObject(IOUtils.toString(new FileInputStream(configFile),"UTF8"));
+
+                if(obj.has(BuildConfig.APPLICATION_ID)){
+                    obj=obj.getJSONObject(BuildConfig.APPLICATION_ID);
+                }
+                if(obj.has("skipConfig")) {
+                    return;
+                }
+
                 if(obj.has("requestProtocol")) {
                     webProtocol=apiProtocol=obj.getString("requestProtocol");
                 }
@@ -88,7 +113,7 @@ public class ConfigNet {
                 }
             }
             catch(Exception e){
-
+                e.printStackTrace();
             }
         }
     }

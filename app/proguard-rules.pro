@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keep class net.integraa.read.network.** { *; }

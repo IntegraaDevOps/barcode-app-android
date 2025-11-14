@@ -1,12 +1,31 @@
 <resources>
-    <string name="app_name">Integraa Lettura</string>
+    <string name="app_name">Integr@a Lettura</string>
     <string name="alert">Attenzione</string>
     <string name="user_access">Accesso Utente</string>
     <string name="access_waiting">Accesso in corso...</string>
     <string name="client_code">Codice Cliente</string>
     <string name="invalid_client_code">Codice Cliente non valido</string>
+    <string name="invalid_read">Valore lettura non valido</string>
+    <string name="invalid_serial">Matricola non valida</string>
     <string name="password">Password</string>
+    <string name="serial">Matricola</string>
+    <string name="scan_serial">Scansiona Matricola</string>
+    <string name="confirm">Conferma</string>
+    <string name="confirm_exit">Sei sicuro di voler uscire?</string>
+    <string name="read">Lettura</string>
+    <string name="datetime">Data/Ora</string>
+    <string name="date">Data</string>
+    <string name="add">Aggiungi</string>
+    <string name="add_read">Aggiungi Lettura</string>
+    <string name="add_read_waiting">Aggiunta Lettura in corso</string>
+    <string name="add_read_failed">Aggiunta Lettura Fallita!</string>
+    <string name="refresh_read">Aggiorna</string>
     <string name="invalid_password">Password non valida</string>
     <string name="login_failed">Accesso Fallito!</string>
+    <string name="read_data_failed">Caricamento Letture Fallito!</string>
+    <string name="read_data_waiting">Caricamento Letture in corso...</string>
     <string name="no_barcode_scanner_available">Nessun Lettore di Barcode Disponibile</string>
+    <string name="needs_overlay_permission">E\' necessario concedere il permesso per visualizzare l\'app sopra le altre.</string>
+    <string name="needs_unknown_permission">E\' necessario concedere il permesso per poter installare le dipendenze.</string>
+    <string name="needs_allfiles_permission">E\' necessario concedere il permesso per poter accedere a tutti i files.</string>
 </resources>

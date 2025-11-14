@@ -38,6 +38,7 @@ public abstract class Barcode {
     }
     public abstract void onResume();
     public abstract void onPause();
+    public abstract void onDestroy();
     public abstract View getView();
     public abstract void start();
     public abstract void stop();

@@ -333,7 +333,7 @@ public class BarcodeScanbot extends Barcode {
                 if (frameHandlerResult instanceof FrameHandlerResult.Success) {
                     FrameHandlerResult.Success<? extends BarcodeScannerResult> res = ((FrameHandlerResult.Success<? extends BarcodeScannerResult>) frameHandlerResult);
                     if(res.getValue()!=null&&res.getValue().getBarcodes()!=null) {
-                        ArrayList<Barcode.Result> results = new ArrayList<>(1);
+                        ArrayList<Barcode.Result> results = new ArrayList<>(res.getValue().getBarcodes().size());
                         for (BarcodeItem item :res.getValue().getBarcodes()) {
                             results.add(new Result(item));
                         }
@@ -379,6 +379,14 @@ public class BarcodeScanbot extends Barcode {
             return;
         }
         barcodeScannerView.getViewController().onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(barcodeScannerView==null) {
+            return;
+        }
+        //barcodeScannerView.getViewController().closeCamera();
     }
 
     @Override

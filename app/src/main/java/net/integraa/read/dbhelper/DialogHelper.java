@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,6 +30,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +42,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.integraa.read.R;
+import net.integraa.read.scanditLayout.FullscreenScanFragment;
 import net.integraa.read.scanditLayout.FullscreenScanFragmentContainerActivity;
 
 public class DialogHelper {
@@ -136,7 +143,7 @@ public class DialogHelper {
         return true;
     }
 
-    public static boolean passwordInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+    public static AlertDialog passwordInput(FragmentActivity context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
@@ -144,7 +151,7 @@ public class DialogHelper {
         return genericInputs(context, title, message, settings, listerner);
     }
 
-    public static boolean integerInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+    public static AlertDialog integerInput(FragmentActivity context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
@@ -152,7 +159,7 @@ public class DialogHelper {
         return genericInputs(context, title, message, settings, listerner);
     }
 
-    public static boolean clientAccessInput(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+    public static AlertDialog clientAccessInput(FragmentActivity context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
@@ -185,7 +192,44 @@ public class DialogHelper {
         });
     }
 
-    public static boolean genericInputs(Context context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+    public static AlertDialog readInput(FragmentActivity context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
+        if(settings==null) {
+            settings=new HashMap<>();
+        }
+        settings.put("FullScreen", true);
+        settings.put("ManualDismiss", true);
+        settings.put("InputsCount", 2);
+        settings.put("Hint0", context.getString(R.string.scan_serial));
+        settings.put("ReadOnly0", true);
+        settings.put("MaxLength0", 20);
+        //settings.put("InputType0", InputType.TYPE_CLASS_NUMBER);
+        settings.put("Barcode0", true);
+        settings.put("Hint1", context.getString(R.string.read));
+        settings.put("InputType1", InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        settings.put("MaxLength1", 20);
+        return genericInputs(context, title, message, settings, new DialogInputsInterface() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, String[] inputs) {
+                String msg = "";
+                if(which==DialogInterface.BUTTON_POSITIVE) {
+                    if (TextUtils.isEmpty(inputs[0])) {
+                        msg+=context.getString(R.string.invalid_serial)+"\n";
+                    }
+                    if (TextUtils.isEmpty(inputs[1])) {
+                        msg+=context.getString(R.string.invalid_read)+"\n";
+                    }
+                }
+                if (msg.isEmpty()) {
+                    listerner.onClick(dialog, which, inputs);
+                }
+                else {
+                    DialogHelper.alert(context,"",msg);
+                }
+            }
+        });
+    }
+
+    public static AlertDialog genericInputs(FragmentActivity context, String title, String message, Map<String,Object> settings, DialogInputsInterface listerner) {
         if(settings==null) {
             settings=new HashMap<>();
         }
@@ -207,6 +251,7 @@ public class DialogHelper {
         viewtext.setText(message);
         viewtext.setPadding(50,0,50,0);
         LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setGravity(Gravity.CENTER);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(viewtext);
@@ -215,6 +260,14 @@ public class DialogHelper {
         EditText[] edittexts = new EditText[count];
         for(int i=0;i<count;i++){
             edittexts[i]=new EditText(context);
+            LinearLayout linearLayoutI = new LinearLayout(context);
+            linearLayoutI.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            linearLayoutI.setOrientation(LinearLayout.HORIZONTAL);
+            linearLayoutI.setWeightSum(1.0f);
+            LinearLayout.LayoutParams edittextL = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.8f);
+            edittextL.gravity= Gravity.CENTER;
+            edittexts[i].setLayoutParams(edittextL);
+            linearLayoutI.addView(edittexts[i]);
             for(String value:new String[]{"InputType"+i,"InputType"}) {
                 if(settings.containsKey(value)) {
                     edittexts[i].setInputType((Integer)settings.get(value));
@@ -233,13 +286,49 @@ public class DialogHelper {
                     break;
                 }
             }
+            for(String value:new String[]{"ReadOnly"+i,"ReadOnly"}) {
+                if(settings.containsKey(value)) {
+                    edittexts[i].setEnabled(false);
+                    break;
+                }
+            }
             for(String value:new String[]{"Text"+i,"Text"}) {
                 if(settings.containsKey(value)) {
                     edittexts[i].setText(settings.get(value).toString());
                     break;
                 }
             }
-            linearLayout.addView(edittexts[i]);
+            for(String value:new String[]{"Barcode"+i,"Barcode"}) {
+                if(settings.containsKey(value)) {
+                    ImageView barcodeI = new ImageView(context);
+                    barcodeI.setLayoutParams(new LinearLayout.LayoutParams(48,48));
+                    barcodeI.setBackgroundResource(R.drawable.barcode_icon);
+                    final EditText editText = edittexts[i];
+                    barcodeI.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            barcode(context,new FullscreenScanFragment.ResultListener<AlertDialog>() {
+                                @Override
+                                public void onResult(int code, Intent data, boolean finish, AlertDialog dialog) {
+                                    if(data!=null&&data.hasExtra("barcode")) {
+                                        editText.setText(data.getStringExtra("barcode"));
+                                    }
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                    });
+                    LinearLayout barcodeLI = new LinearLayout(context);
+                    barcodeLI.setGravity(Gravity.CENTER);
+                    LinearLayout.LayoutParams barcodeIL = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.2f);
+                    barcodeIL.gravity= Gravity.CENTER;
+                    barcodeLI.setLayoutParams(barcodeIL);
+                    barcodeLI.addView(barcodeI);
+                    linearLayoutI.addView(barcodeLI);
+                    break;
+                }
+            }
+            linearLayout.addView(linearLayoutI);
         }
 
         info.setView(linearLayout);
@@ -296,7 +385,7 @@ public class DialogHelper {
             }
         });
         alertDialog.show();
-        return true;
+        return alertDialog;
     }
 
     public static <K,V extends Object> boolean singleSelect(Context context, String title, Map<K,V> map, EntryInterface<K,V> listener) {
@@ -335,6 +424,37 @@ public class DialogHelper {
         });
         return true;
     }
+
+    public static boolean barcode(FragmentActivity activity, FullscreenScanFragment.ResultListener<AlertDialog> listener) {
+        AlertDialog.Builder info = new AlertDialog.Builder(activity, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
+        View view = activity.getLayoutInflater().inflate(R.layout.dialog_barcode, null);
+        info.setView(view);
+        info.setCancelable(true);
+        AlertDialog dialog = info.create();
+        dialog.show();
+        FullscreenScanFragment fragment = (FullscreenScanFragment)activity.getSupportFragmentManager().findFragmentById(R.id.fragment_scan_full);
+        fragment.setResultListener(new FullscreenScanFragment.ResultListener<FullscreenScanFragment>() {
+            @Override
+            public void onResult(int code, Intent data, boolean finish, FullscreenScanFragment obj) {
+                try {
+                    activity.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
+                catch (Exception e){}
+                listener.onResult(code, data, finish, dialog);
+            }
+        });
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                try {
+                    activity.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
+                catch (Exception e){}
+            }
+        });
+        return true;
+    }
+
 
     public interface DialogInputInterface {
         void onClick(DialogInterface dialog, int which, String input);

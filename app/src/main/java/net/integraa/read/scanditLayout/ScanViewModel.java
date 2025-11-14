@@ -175,6 +175,10 @@ public class ScanViewModel extends ViewModel implements Barcode.ValueListener {
         Scanner.getBarcode().pause();
     }
 
+    public void destroyScanning() {
+        Scanner.getBarcode().onDestroy();
+    }
+
     public void startFrameSource() {
         Scanner.getBarcode().start();
     }
