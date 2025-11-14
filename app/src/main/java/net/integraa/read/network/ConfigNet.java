@@ -40,12 +40,34 @@ public class ConfigNet {
         SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
         return preferences.getString("TOKEN","");
     }
+    public static String getBarcodeScannerKey() {
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        return preferences.getString("BarcodeScannerKey","");
+    }
+    public static String getBarcodeScannerType() {
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        return preferences.getString("BarcodeScannerType","");
+    }
     public static void setToken(String value) {
         if (value==null) {
             return;
         }
         SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
         preferences.edit().putString("TOKEN",value).commit();
+    }
+    public static void setBarcodeScannerKey(String value) {
+        if (value==null) {
+            return;
+        }
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        preferences.edit().putString("BarcodeScannerKey",value).commit();
+    }
+    public static void setBarcodeScannerType(String value) {
+        if (value==null) {
+            return;
+        }
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        preferences.edit().putString("BarcodeScannerType",value).commit();
     }
     public static String requestsPath(String path) {
         return Environment.getExternalStorageDirectory()+File.separator+integraa_content_dir+ File.separator+path;

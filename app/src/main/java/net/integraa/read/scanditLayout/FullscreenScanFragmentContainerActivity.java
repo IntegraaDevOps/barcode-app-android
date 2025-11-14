@@ -127,10 +127,6 @@ public class FullscreenScanFragmentContainerActivity extends ZActivity {
 
         else if ( !intent.hasExtra("barcode_mod") ){
             ConfigNet.setToken("");
-            /*if (true!=false) {
-                setFragment(new ReadFragment());
-                return;
-            }*/
             IntegraaApi integraaApi= APIClient.getClient().create(IntegraaApi.class);
             DialogHelper.clientAccessInput(FullscreenScanFragmentContainerActivity.this, getString(R.string.user_access), "", null, new DialogHelper.DialogInputsInterface() {
                 @Override
@@ -153,6 +149,8 @@ public class FullscreenScanFragmentContainerActivity extends ZActivity {
                                     return;
                                 }
                                 ConfigNet.setToken(response.body().getToken());
+                                ConfigNet.setBarcodeScannerKey(response.body().getBarcode_scanner_key());
+                                ConfigNet.setBarcodeScannerType(response.body().getBarcode_scanner_type());
                                 progressDialog.dismiss();
                                 dialog.dismiss();
                                 setFragment(new ReadFragment());

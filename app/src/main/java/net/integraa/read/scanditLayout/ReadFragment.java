@@ -55,10 +55,10 @@ public class ReadFragment  extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Scanner.setBarcodeType("scandit");
-        Scanner.getBarcode().initialize(getActivity(),"AvUmm2DZRgP5FdlPGSNsju4V3j5LFKttRBG0GB8eXw6rRxdRi0T1zYVHDEGMGcaY1DO3D9N1+obhUGGwkBZQraZ6Pw9EcyCptFljwNwc0gvLNGtSPwOvBqEWUnSEdoW8Q2aYKoEDJhKTc/QqmmtxPMxt7L1LKR6iimzVbc5B5ok1Qj8uNEbwRagULf9XcqoBwxrzrkhKWdelcZVWfmQHGmQ6UfKxRVpkK10loSFvM+0WLzavOECgmDNwV06sUv6haEFLg2ovYJcZD8kOzVctSWNcX3DzOWQGhTNlHpp2p6FUVG54JjPrtR892yMFVkIdwlsKcvZG1uvYUN3nWhf6qgt683NBex3FA1kxBvMI+85xf1qYiXxZhJ9KSPJWLUaf0l5iIOlWeyWmLte1EVYZQCJVw4QKOhz4vwz67gkb8Fl9V1TlcVOSqcV6txvXdVI8IlYzuChJrReuPW9bQnoLvNxpbiq9VZ671GSwnRIUcQ3pUMjS+UuJCphHhv7qSoS85FqVJmBw0+5iMmnlHnHZCtl5ckahInJNFGd2qV98H5auNG0oJ2rxx+5b02q4UUTLPSjwQgRKqQaFQOzPMkDymvwNyNivaXZYsEEGNLxLIUOJVB2ow1El24Uf8BDXbYhjxk3RXEVFWlMLNPlJJVzsMylS/LkqSVMbsElo1btB2oa3S+b1Tn2Q0LYfh3ZIXm3/lkLGqXN+WZW4T/opyXNsu+VXD8ipFdBgKh2vujhE2QdOTqyeIVWrOUE6QBYqRNnXw0NJz2poUjTfafc1b37Wtzxx/3NtdoFsN12KkvZXp5zSaRFscnj5XEhbBzS1ftCHTHSgadtf5oI9X8INEFvE1yJgoO+IbcmRTHdhrEZeJ6qaGqaoQG+WahodRWBFUAiWbGW0Gf5+ZemBeW1gdAtGXJZrbdRkcFUtG0kVuctrSJshcAc98QWe9goybKVoUm/HKFJUyep7zanHFro9MiUf3vZh7z41M95JsHgxjILhvD8hZlZ+MwwM+QIfnqUQgv5Bh2ixiaMK0/nkZTbYSJ9455F1ccyAaZZQ3wecmI7gNILC9Gix0cJ6zDnT5Dyd9d1qzOFsazrc/VYGeikJY2tv/LgwZEdcQHHkkxOdwxmDqnRGIq29rklSlpT0TkBVhVG61rxvZhWrYwIUb1/A5vtNfPvZy5C+/VLGfLowi0XalAq7VpRBornLJ6zYOQPvne26dQVFImR81cfbtTFHmeriYUBoYJxt2S9f8Ki2436i4xzf8kf//Q6LP77eDeUu4NNamZwJEc5UG45QigXcMkbIOw3ImIczdYlTrJoa9QTZ6stbc/sk7eLfLo2hzdhqpsaKUj1hH1X+FHl2jWeplnIjvWaZAv08EPlA7hVI8VmOR9hg8COctoV0tUDqyVdWr1p3PwIsXOIzOP2oME0suNF74uMW8zjt85peZK9ZKaXIgyOnCNj6J3nTCMZwoqt5uuDy/5s6mSpjAB8FOJWbYFwO68PjBSIYxt3R1olGzYZD7pvan85cMn6XBnTPJTBst50Ezh/Ohff8Zozkwuwg9A4UJpvmEXUMZiU/1UHeYQR8itNL1I1SAdW8OYvcHRaTcUHRr4QlUTSoZTyvwcNYcqM4UmhYEJTEQ2lVEdDV3czAB0z3ZX54Q3cEx/XB4n1n5oO36SsA10UF");
-        Scanner.getBarcode().applyTypes(Arrays.asList(Barcode.Type.Code128,Barcode.Type.ITF));
+        Scanner.setBarcodeType(ConfigNet.getBarcodeScannerType());
+        Scanner.getBarcode().initialize(getActivity(),ConfigNet.getBarcodeScannerKey());
         Scanner.getBarcode().onResume();
+        Scanner.getBarcode().applyTypes(Arrays.asList(Barcode.Type.Code128,Barcode.Type.ITF));
         viewCapture = inflater.inflate(R.layout.fragment_read, container, false);
         readAdd = viewCapture.findViewById(R.id.button_read_add);
         readRefresh = viewCapture.findViewById(R.id.button_read_refresh);
