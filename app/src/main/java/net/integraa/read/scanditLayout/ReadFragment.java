@@ -56,6 +56,7 @@ public class ReadFragment  extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Scanner.setBarcodeType(ConfigNet.getBarcodeScannerType());
+        Scanner.getBarcode().setZoom(ConfigNet.getBarcodeScannerZoom());
         Scanner.getBarcode().initialize(getActivity(),ConfigNet.getBarcodeScannerKey());
         Scanner.getBarcode().onResume();
         Scanner.getBarcode().applyTypes(Arrays.asList(Barcode.Type.Code128,Barcode.Type.ITF));

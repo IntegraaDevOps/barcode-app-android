@@ -153,6 +153,7 @@ public class FullscreenScanFragmentContainerActivity extends ZActivity {
                                 ConfigNet.setToken(response.body().getToken());
                                 ConfigNet.setBarcodeScannerKey(response.body().getBarcode_scanner_key());
                                 ConfigNet.setBarcodeScannerType(response.body().getBarcode_scanner_type());
+                                ConfigNet.setBarcodeScannerZoom(response.body().getBarcode_scanner_zoom());
                                 progressDialog.dismiss();
                                 dialog.dismiss();
                                 setFragment(new ReadFragment());
@@ -191,6 +192,12 @@ public class FullscreenScanFragmentContainerActivity extends ZActivity {
         }
 
         Scanner.setBarcodeType(map_values.getOrDefault("barcode_scanner_type",""));
+        float zoom = 1.0f;
+        try {
+            zoom = Float.parseFloat(map_values.getOrDefault("barcode_scanner_zoom","1.0"));
+        }
+        catch (Exception e){}
+        Scanner.getBarcode().setZoom(zoom);
         Scanner.getBarcode().initialize(this,map_values.getOrDefault("barcode_scanner_key",""));
         Scanner.getBarcode().onResume();
 

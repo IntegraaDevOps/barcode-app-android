@@ -324,6 +324,7 @@ public class BarcodeScanbot extends Barcode {
     @Override
     public View getView() {
         barcodeScannerView = new BarcodeScannerView(activity, null);
+        setZoom(zoom);
         barcodeScanner = new ScanbotBarcodeScannerSDK(activity).createBarcodeScanner();
         applyTypes(types);
         barcodeScannerView.initCamera();
@@ -355,6 +356,7 @@ public class BarcodeScanbot extends Barcode {
 
             @Override
             public void onCameraOpen() {
+                setZoom(zoom);
                 //barcodeScannerView.getViewController().useFlash(true);
             }
         });
@@ -442,6 +444,15 @@ public class BarcodeScanbot extends Barcode {
             return;
         }
         barcodeScannerView.setSoundEffectsEnabled(true);
+    }
+
+    @Override
+    public void setZoom(float value) {
+        super.setZoom(value);
+        if(barcodeScannerView==null) {
+            return;
+        }
+        barcodeScannerView.getCameraConfiguration().setPhysicalZoomRatio(value);
     }
 
     class Result implements Barcode.Result {

@@ -13,6 +13,7 @@ import com.scandit.datacapture.core.capture.DataCaptureContext;
 import com.scandit.datacapture.core.common.feedback.Feedback;
 import com.scandit.datacapture.core.data.FrameData;
 import com.scandit.datacapture.core.source.Camera;
+import com.scandit.datacapture.core.source.CameraSettings;
 import com.scandit.datacapture.core.source.FrameSourceState;
 import com.scandit.datacapture.core.ui.DataCaptureView;
 import com.scandit.datacapture.core.ui.style.Brush;
@@ -29,12 +30,15 @@ public class BarcodeScandit extends Barcode {
     protected DataCaptureContext dataCaptureContext;
     protected BarcodeCapture barcodeCapture;
     protected Camera camera;
+    protected CameraSettings cameraSettings;
     protected DataCaptureView dataCaptureView;
     protected BarcodeCaptureOverlay overlay;
 
     private void init() {
         dataCaptureContext = DataCaptureContext.forLicenseKey(licenseKey);
-        camera = Camera.getDefaultCamera(BarcodeCapture.createRecommendedCameraSettings());
+        cameraSettings = BarcodeCapture.createRecommendedCameraSettings();
+        setZoom(zoom);
+        camera = Camera.getDefaultCamera(cameraSettings);
         if (camera == null) {
             return;
         }
@@ -251,6 +255,15 @@ public class BarcodeScandit extends Barcode {
     @Override
     public void setSound(boolean value) {
 
+    }
+
+    @Override
+    public void setZoom(float value) {
+        super.setZoom(value);
+        if(cameraSettings==null) {
+            return;
+        }
+        cameraSettings.setZoomFactor(zoom);
     }
 
     class Result implements Barcode.Result {

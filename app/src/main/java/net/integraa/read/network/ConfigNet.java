@@ -48,6 +48,14 @@ public class ConfigNet {
         SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
         return preferences.getString("BarcodeScannerType","");
     }
+    public static float getBarcodeScannerZoom() {
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        try {
+            Float.parseFloat(preferences.getString("BarcodeScannerZoom","1.0"));
+        }
+        catch (Exception e) {}
+        return 1.0f;
+    }
     public static void setToken(String value) {
         if (value==null) {
             return;
@@ -68,6 +76,13 @@ public class ConfigNet {
         }
         SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
         preferences.edit().putString("BarcodeScannerType",value).commit();
+    }
+    public static void setBarcodeScannerZoom(String value) {
+        if (value==null) {
+            return;
+        }
+        SharedPreferences preferences = Scanner.getApplication().getSharedPreferences("APP_DATA", Context.MODE_PRIVATE);
+        preferences.edit().putString("BarcodeScannerZoom",value).commit();
     }
     public static String requestsPath(String path) {
         return Environment.getExternalStorageDirectory()+File.separator+integraa_content_dir+ File.separator+path;

@@ -73,4 +73,5 @@ public class BarcodeDefault extends Barcode {
     public void setSound(boolean value) {
 
     }
+
 }
