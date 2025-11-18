@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
+import net.integraa.read.MainApplication;
 import net.integraa.read.R;
 import net.integraa.read.Util;
 import net.integraa.read.ZActivity;
@@ -56,6 +57,7 @@ public class FullscreenScanFragmentContainerActivity extends ZActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //MainApplication.mountObbFile(this);
         setContentView(R.layout.activity_fullscreen_scan_fragment_container);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

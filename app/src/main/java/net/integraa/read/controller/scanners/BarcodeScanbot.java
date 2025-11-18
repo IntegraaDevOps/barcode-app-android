@@ -358,7 +358,6 @@ public class BarcodeScanbot extends Barcode {
                 //barcodeScannerView.getViewController().useFlash(true);
             }
         });
-        onResume();
         return barcodeScannerView;
     }
 

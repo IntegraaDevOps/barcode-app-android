@@ -1,4 +1,6 @@
+import com.android.build.OutputFile
 plugins {
+    id 'base'
     id 'com.android.application'
 }
 
@@ -13,15 +15,67 @@ android {
 
     defaultConfig {
         applicationId "net.integraa.read"
-        minSdkVersion 27
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 23
         versionName "23.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
+            //abiFilters "armeabi-v7a", "arm64-v8a"
             //abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64", "mips"
+        }
+    }
+    splits {
+        // Configures multiple APKs based on ABI.
+        abi {
+            def isReleaseBuild = false
+
+            gradle.startParameter.taskNames.find {
+                // Enable split for release builds in different build flavors
+                // (assemblePaidRelease, assembleFreeRelease, etc.).
+                if (it ==~ /:app:assemble.*Release/) {
+                    isReleaseBuild = true
+                    return true // break
+                }
+
+                return false // continue
+            }
+
+            //FORCE ALWAYS ENABLED
+            isReleaseBuild = true
+
+            // Enables building multiple APKs per ABI.
+            enable isReleaseBuild
+
+            // Enables building multiple APKs per ABI.
+            //enable true
+
+            // By default all ABIs are included, so use reset() and include to specify that we only
+            // want APKs for x86, armeabi-v7a, and mips.
+            reset()
+
+            // Specifies a list of ABIs that Gradle should create APKs for.
+            include "mips", "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+
+            // Specifies that we want to also generate a universal APK that includes all ABIs.
+            universalApk true
+        }
+        def abiCodes = ['mips':1, 'armeabi':2, 'armeabi-v7a':3, 'arm64-v8a':4, 'x86':5, 'x86_64':6]
+
+        // APKs for the same app that all have the same version information.
+        android.applicationVariants.all { variant ->
+            // Assigns a different version code for each output APK.
+            variant.outputs.each {
+                output ->
+                    def abiName = output.getFilter(OutputFile.ABI)
+                    output.versionCodeOverride = abiCodes.get(abiName, 0) * 100000000 + variant.versionCode
+                    //output.outputFileName = new File(project.projectDir,"/builds/releases")//,output.outputFile.name.replace("app-","barcode." + variant.versionCode + ".").replace("-release",""))
+            }
+            variant.outputs.all {
+                def appName = "barcode"
+                outputFileName = "../builds/${variant.name}/${appName}.${variant.versionCode}/" + outputFileName.replace("app-","${appName}." + variant.versionCode + ".").replace("-release","").replace(".release","").replace("release","").replace("-debug","").replace(".debug","").replace("debug","").replace(".universal","")
+            }
         }
     }
 
@@ -46,34 +100,154 @@ android {
     namespace 'net.integraa.read'
 }
 
+configurations {
+    //downloadableDeps.extendsFrom(implementation)
+    //downloadableDeps.canBeResolved = true
+    //downloadableDeps.description = "Configurazione per risolvere le dipendenze implementation"
+    downloadableDeps {
+        canBeResolved = true
+        extendsFrom(implementation)
+    }
+    obbLibraries {
+        canBeResolved = true
+        extendsFrom(compileOnly)
+    }
+}
+
 dependencies {
-    implementation("com.squareup.picasso:picasso:2.71828")
+    //implementation("com.squareup.picasso:picasso:2.71828")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
 
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50'
+    //implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50'
 
     implementation 'com.google.code.gson:gson:2.6.2'
 
-    implementation 'com.squareup.retrofit2:converter-scalars:2.0.1'
+    //implementation 'com.squareup.retrofit2:converter-scalars:2.0.1'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    //implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation 'com.google.android.material:material:1.13.0'
 
     def sdkVersion = "7.1.2"
     implementation("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
-    implementation("io.scanbot:rtu-ui-v2-barcode:$sdkVersion")
-    implementation("io.scanbot:barcode-sdk-pdfium:$sdkVersion")
+    //compileOnly("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
+    //runtimeOnly("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
+    //obbLibraries("io.scanbot:scanbot-barcode-scanner-sdk:$sdkVersion")
+    //implementation("io.scanbot:rtu-ui-v2-barcode:$sdkVersion")
+    //implementation("io.scanbot:barcode-sdk-pdfium:$sdkVersion")
 
     def sdkScanditVersion = "8.0.0"
-    api "com.scandit.datacapture:core:${sdkScanditVersion}"
-    api "com.scandit.datacapture:barcode:${sdkScanditVersion}"
+    implementation "com.scandit.datacapture:core:${sdkScanditVersion}"
+    //compileOnly "com.scandit.datacapture:core:${sdkScanditVersion}"
+    //obbLibraries "com.scandit.datacapture:core:${sdkScanditVersion}"
+    //runtimeOnly "com.scandit.datacapture:core:${sdkScanditVersion}"
+    implementation "com.scandit.datacapture:barcode:${sdkScanditVersion}"
+    //compileOnly "com.scandit.datacapture:barcode:${sdkScanditVersion}"
+    //runtimeOnly "com.scandit.datacapture:barcode:${sdkScanditVersion}"
+    //obbLibraries "com.scandit.datacapture:barcode:${sdkScanditVersion}"
 
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 }
+/*
+configurations {
+    customConfig.extendsFrom implementation
+    customCompile.extendsFrom compile
+}
+task copyLibsOLD(type: Copy) {
+    //configurations.implementation.setCanBeResolved(true)
+    //configurations.api.setCanBeResolved(true)
+
+    println configurations.customConfig.resolve()
+    //println configurations.api.resolve()
+
+    println 'COPYINGCOPYINGCOPYING!!!!!!!!!!!!!!!!!!!!'
+    println "$project.rootDir\\mylibs"
+    from configurations.implementation
+    into "$project.rootDir\\mylibs"
+}
+build.dependsOn copyLibsOLD
+task copyLibs(type: Copy) {
+    from configurations.customCompile
+    into 'mylibs'
+}
+
+afterEvaluate {
+    android.libraryVariants.all { variant ->
+        variant.javaCompiler.dependsOn(copyLibs)
+    }
+}
+
+task copyCompileDependencies(type: Copy) {
+    into "$project.rootDir\\mylibs"
+    from configurations.compile
+}
+/*
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        task "copyDependencies${variant.name.capitalize()}"() {
+            outputs.upToDateWhen { false }
+            doLast {
+                println "Executing task copyDependencies${variant.name.capitalize()}"
+            }
+        }
+    }
+}
+*/
+
+/*
+// 2. MODIFICA il tuo task per usare la configurazione custom
+task copyDownloadableDepsToLibs(type: Copy) {
+    def resolvedConfiguration = configurations.downloadableDeps.resolvedConfiguration
+    def filesToCopy = []
+    resolvedConfiguration.getResolvedArtifacts().each { artifact ->
+        def file = artifact.getFile()
+        def group = artifact.getModuleVersion().getId().getGroup()
+        if (group.matches("(io.scanbot|com.scandit).*")) {
+            filesToCopy.add(file)
+        }
+    }
+    from filesToCopy
+    into 'mylibs'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    //from configurations.downloadableDeps
+    //include('*barcode*')
+}
+
+tasks.named('preBuild') {
+    dependsOn copyDownloadableDepsToLibs
+}
+/*
+
+ */
+/*
+task createLibrariesObb(type: Zip) {
+    archiveFileName = 'main.23.net.integraa.read.obb'
+
+    destinationDirectory = file("$project.projectDir/mylibs")
+
+    //def resolvedConfiguration = configurations.downloadableDeps.resolvedConfiguration
+    def resolvedConfiguration = configurations.obbLibraries.resolvedConfiguration
+
+    resolvedConfiguration.getResolvedArtifacts().each { artifact ->
+
+        def file = artifact.getFile()
+        def group = artifact.getModuleVersion().getId().getGroup()
+
+        if (group.matches("(io.scanbot|com.scandit).*")) {
+            from file
+
+            into 'libs'
+        }
+    }
+}
+
+tasks.named('preBuild') {
+    dependsOn createLibrariesObb
+}
+*/

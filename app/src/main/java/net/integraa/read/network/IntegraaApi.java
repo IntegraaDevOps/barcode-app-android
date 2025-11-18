@@ -2,7 +2,6 @@ package net.integraa.read.network;
 
 import java.util.Map;
 
-import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;

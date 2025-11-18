@@ -8,12 +8,90 @@
   "variantName": "release",
   "elements": [
     {
-      "type": "SINGLE",
+      "type": "UNIVERSAL",
       "filters": [],
       "attributes": [],
       "versionCode": 23,
       "versionName": "23.0",
-      "outputFile": "app-release.apk"
+      "outputFile": "../builds/release/barcode.23/barcode.23.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 500000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.x86.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 200000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.armeabi.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 300000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.armeabi-v7a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 600000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.x86_64.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "mips"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 100000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.mips.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 400000023,
+      "versionName": "23.0",
+      "outputFile": "../builds/release/barcode.23/barcode.23.arm64-v8a.apk"
     }
   ],
   "elementType": "File",
@@ -22,16 +100,28 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/app-release.dm"
+        "baselineProfiles/1/barcode.23.dm",
+        "baselineProfiles/1/barcode.23.x86.dm",
+        "baselineProfiles/1/barcode.23.armeabi.dm",
+        "baselineProfiles/1/barcode.23.armeabi-v7a.dm",
+        "baselineProfiles/1/barcode.23.x86_64.dm",
+        "baselineProfiles/1/barcode.23.mips.dm",
+        "baselineProfiles/1/barcode.23.arm64-v8a.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/app-release.dm"
+        "baselineProfiles/0/barcode.23.dm",
+        "baselineProfiles/0/barcode.23.x86.dm",
+        "baselineProfiles/0/barcode.23.armeabi.dm",
+        "baselineProfiles/0/barcode.23.armeabi-v7a.dm",
+        "baselineProfiles/0/barcode.23.x86_64.dm",
+        "baselineProfiles/0/barcode.23.mips.dm",
+        "baselineProfiles/0/barcode.23.arm64-v8a.dm"
       ]
     }
   ],
-  "minSdkVersionForDexing": 27
+  "minSdkVersionForDexing": 24
 }

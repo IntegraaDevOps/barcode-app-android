@@ -248,6 +248,7 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
         //fragment_scan_layout.addView(barcodeScannerView);
         //barcodeScannerView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         //applyEdgeToEdge(viewCapture.findViewById(R.id.fragment_scan_root_view));
+        Scanner.getBarcode().onResume();
         return viewCapture;
     }
 
