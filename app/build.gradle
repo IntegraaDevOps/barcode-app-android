@@ -11,12 +11,13 @@ repositories {
 }
 
 android {
+    ndkVersion '29.0.14206865'
     compileSdkVersion 35
 
     defaultConfig {
         applicationId "net.integraa.read"
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 23
         versionName "23.0"
 
@@ -24,6 +25,11 @@ android {
         ndk {
             //abiFilters "armeabi-v7a", "arm64-v8a"
             //abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64", "mips"
+        }
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
     splits {
@@ -117,21 +123,21 @@ configurations {
 dependencies {
     //implementation("com.squareup.picasso:picasso:2.71828")
 
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
 
     //implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.50'
 
-    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.google.code.gson:gson:2.13.2'
 
     //implementation 'com.squareup.retrofit2:converter-scalars:2.0.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     //implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation 'com.google.android.material:material:1.13.0'
 
     def sdkVersion = "7.1.2"
