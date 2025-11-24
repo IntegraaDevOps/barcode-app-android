@@ -17,9 +17,9 @@ import net.integraa.read.dbhelper.DialogHelper;
 
 public abstract class ZActivity extends AppCompatActivity {
 
-    private static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
-    private static int ACTION_MANAGE_UNKNOWN_APP_SOURCES_REQUEST_CODE = 7456;
-    private static int ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION_REQUEST_CODE = 8436;
+    private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
+    private static final int ACTION_MANAGE_UNKNOWN_APP_SOURCES_REQUEST_CODE = 7456;
+    private static final int ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION_REQUEST_CODE = 8436;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,21 +37,24 @@ public abstract class ZActivity extends AppCompatActivity {
     }
 
     protected boolean checkPermission() {
-        boolean ret = true;
-        Context ctx = this;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()){
-                DialogHelper.alertWithAction(ctx,getString(R.string.alert),getString(R.string.needs_allfiles_permission),new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (!Environment.isExternalStorageManager()){
-                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                                    Uri.parse("package:" + getPackageName()));
-                            startActivityForResult(intent, ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION_REQUEST_CODE);
+        boolean ret = false;
+        if(BuildConfig.DEBUG) {
+            ret = true;
+            Context ctx = this;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (!Environment.isExternalStorageManager()){
+                    DialogHelper.alertWithAction(ctx,getString(R.string.alert),getString(R.string.needs_allfiles_permission),new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (!Environment.isExternalStorageManager()){
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                        Uri.parse("package:" + getPackageName()));
+                                startActivityForResult(intent, ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION_REQUEST_CODE);
+                            }
                         }
-                    }
-                });
-                ret = false;
+                    });
+                    ret = false;
+                }
             }
         }
         return ret;

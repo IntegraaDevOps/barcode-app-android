@@ -15,6 +15,15 @@ public class Util {
 
     public static final String version_app = BuildConfig.VERSION_NAME;
     public static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+    private static final ArrayList<String> permissionsRequired = new ArrayList<>(4);
+    static {
+        if(BuildConfig.DEBUG) {
+            permissionsRequired.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            permissionsRequired.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+            permissionsRequired.add(android.Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+        }
+        permissionsRequired.add(Manifest.permission.CAMERA);
+    }
 
     public  static  boolean addPermission(Activity parent, List<String> permissionsList, String permission) {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -35,12 +44,10 @@ public class Util {
         }else {
             List<String> permissionsNeeded = new ArrayList<>();
             final List<String> permissionsList = new ArrayList<String>();
-            if (!addPermission(activity,permissionsList, android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                permissionsNeeded.add("WRITE EXTERNAL STORAGE");
-            if (!addPermission(activity,permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
-                permissionsNeeded.add("READ EXTERNAL STORAGE");
-            if (!addPermission(activity,permissionsList, Manifest.permission.CAMERA))
-                permissionsNeeded.add("CAMERA");
+            for (String perm:permissionsRequired) {
+                if (!addPermission(activity,permissionsList, perm))
+                    permissionsNeeded.add(perm);
+            }
 
             if (permissionsList.size() > 0) {
                 if (permissionsNeeded.size() > 0) {
