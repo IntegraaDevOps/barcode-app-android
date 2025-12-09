@@ -11,7 +11,6 @@ repositories {
 }
 
 android {
-    ndkVersion '29.0.14206865'
     compileSdkVersion 35
 
     defaultConfig {
@@ -75,7 +74,7 @@ android {
             variant.outputs.each {
                 output ->
                     def abiName = output.getFilter(OutputFile.ABI)
-                    output.versionCodeOverride = abiCodes.get(abiName, 0) * 100000000 + variant.versionCode
+                    output.versionCodeOverride = (variant.versionCode * 10) + abiCodes.get(abiName, 0)
                     //output.outputFileName = new File(project.projectDir,"/builds/releases")//,output.outputFile.name.replace("app-","barcode." + variant.versionCode + ".").replace("-release",""))
             }
             variant.outputs.all {

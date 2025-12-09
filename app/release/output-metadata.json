@@ -11,9 +11,9 @@
       "type": "UNIVERSAL",
       "filters": [],
       "attributes": [],
-      "versionCode": 23,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.apk"
+      "versionCode": 24,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -24,35 +24,9 @@
         }
       ],
       "attributes": [],
-      "versionCode": 600000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.x86_64.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "armeabi"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 200000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.armeabi.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "arm64-v8a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 400000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.arm64-v8a.apk"
+      "versionCode": 600000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.x86_64.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -63,22 +37,22 @@
         }
       ],
       "attributes": [],
-      "versionCode": 300000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.armeabi-v7a.apk"
+      "versionCode": 300000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.armeabi-v7a.apk"
     },
     {
       "type": "ONE_OF_MANY",
       "filters": [
         {
           "filterType": "ABI",
-          "value": "mips"
+          "value": "armeabi"
         }
       ],
       "attributes": [],
-      "versionCode": 100000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.mips.apk"
+      "versionCode": 200000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.armeabi.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -89,9 +63,35 @@
         }
       ],
       "attributes": [],
-      "versionCode": 500000023,
-      "versionName": "23.0",
-      "outputFile": "../builds/release/barcode.23/barcode.23.x86.apk"
+      "versionCode": 500000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.x86.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 400000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.arm64-v8a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "mips"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 100000024,
+      "versionName": "24.0",
+      "outputFile": "../builds/release/barcode.24/barcode.24.mips.apk"
     }
   ],
   "elementType": "File",
@@ -100,26 +100,26 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/barcode.23.dm",
-        "baselineProfiles/1/barcode.23.x86_64.dm",
-        "baselineProfiles/1/barcode.23.armeabi.dm",
-        "baselineProfiles/1/barcode.23.arm64-v8a.dm",
-        "baselineProfiles/1/barcode.23.armeabi-v7a.dm",
-        "baselineProfiles/1/barcode.23.mips.dm",
-        "baselineProfiles/1/barcode.23.x86.dm"
+        "baselineProfiles/1/barcode.24.dm",
+        "baselineProfiles/1/barcode.24.x86_64.dm",
+        "baselineProfiles/1/barcode.24.armeabi-v7a.dm",
+        "baselineProfiles/1/barcode.24.armeabi.dm",
+        "baselineProfiles/1/barcode.24.x86.dm",
+        "baselineProfiles/1/barcode.24.arm64-v8a.dm",
+        "baselineProfiles/1/barcode.24.mips.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/barcode.23.dm",
-        "baselineProfiles/0/barcode.23.x86_64.dm",
-        "baselineProfiles/0/barcode.23.armeabi.dm",
-        "baselineProfiles/0/barcode.23.arm64-v8a.dm",
-        "baselineProfiles/0/barcode.23.armeabi-v7a.dm",
-        "baselineProfiles/0/barcode.23.mips.dm",
-        "baselineProfiles/0/barcode.23.x86.dm"
+        "baselineProfiles/0/barcode.24.dm",
+        "baselineProfiles/0/barcode.24.x86_64.dm",
+        "baselineProfiles/0/barcode.24.armeabi-v7a.dm",
+        "baselineProfiles/0/barcode.24.armeabi.dm",
+        "baselineProfiles/0/barcode.24.x86.dm",
+        "baselineProfiles/0/barcode.24.arm64-v8a.dm",
+        "baselineProfiles/0/barcode.24.mips.dm"
       ]
     }
   ],
