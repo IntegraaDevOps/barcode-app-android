@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -57,7 +58,7 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
 
     private ScanViewModel viewModel;
     static FullscreenScanFragment newInstance() {
-        return new FullscreenScanFragment();
+        return new FullscreenScanFragment(null);
     }
 
     private AlertDialog dialog = null;
@@ -94,14 +95,59 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
     private String barcode_regexp = null; //Paramentro passato da Giacenze
 
     private String barcode_regexp_integraa = null;
-
     private boolean barcode_distinta_recapito_effettuare = false;
+    protected ResultListener<FullscreenScanFragment> readListener=null;
+    protected CharSequence actionBarTitle = null;
+    protected CharSequence actionBarSubitle = null;
+    protected Drawable actionBarBackground = null;
 
+    public FullscreenScanFragment(Bundle arguments) {
+        super();
+        if(arguments!=null) {
+            setArguments(arguments);
+        }
+    }
+    public FullscreenScanFragment() {
+        super();
+        Bundle b = new Bundle();
+        b.putString("barcode_mod","single");
+        b.putString("flag_avviso","0");
+        b.putString("internal_management","1");
+        setArguments(b);
+    }
+
+    public void setResultListener(ResultListener<FullscreenScanFragment> readListener) {
+        this.readListener=readListener;
+    }
+
+    protected void setResult(int code, Intent data, boolean finish) {
+        if (actionBarTitle != null) {
+            actionBar.setTitle(actionBarTitle);
+        }
+        if (actionBarSubitle!= null) {
+            actionBar.setSubtitle(actionBarSubitle);
+        }
+        if (actionBarBackground!= null) {
+            actionBar.setBackgroundDrawable(actionBarBackground);
+        }
+        if(readListener!=null) {
+            readListener.onResult(code, data, finish, this);
+        }
+        else {
+            if (data!=null) {
+                getActivity().setResult(code,data);
+            }
+            else {
+                getActivity().setResult(code);
+            }
+            if(finish){
+                getActivity().finish();
+            }
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-
-
         try {
 
             super.onCreate(savedInstanceState);
@@ -116,6 +162,11 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
             viewModel = ViewModelProviders.of(this).get(ScanViewModel.class);
 
             actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+            actionBarTitle=actionBar.getTitle();
+            actionBarSubitle=actionBar.getSubtitle();
+            actionBarBackground = new ColorDrawable(getResources().getColor(R.color.default_actionbar));
+
             actionBar.setTitle((Html.fromHtml("<font color=\"#000000\">Barcode Scanner</font>")));
             actionBar.setSubtitle((Html.fromHtml("<font color=\"#000000\">Integraa</font>")));
             colorDrawable = new ColorDrawable(Color.parseColor("#FEDA44"));
@@ -197,6 +248,7 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
         //fragment_scan_layout.addView(barcodeScannerView);
         //barcodeScannerView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         //applyEdgeToEdge(viewCapture.findViewById(R.id.fragment_scan_root_view));
+        Scanner.getBarcode().onResume();
         return viewCapture;
     }
 
@@ -261,6 +313,12 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        viewModel.destroyScanning();
+    }
+
+    @Override
     public void onPause() {
 
         try{
@@ -318,25 +376,23 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
                     //Barcode singolo
                     intent.putExtra("barcode", barcode_input);
                     intent.setFlags(0);
-                    getActivity().setResult(99, intent);
-                    getActivity().finish();
+                    setResult(99, intent, true);
                 }
             }
             if ( modality.equals("multi") ) {
                 multiBarcode();
                 intent.putStringArrayListExtra("barcode", barcode_value_list);
-                getActivity().setResult(999, intent);
+                setResult(999, intent, false);
             }
             if ( modality.equals("annulla_singolo")){
                 intent.putExtra("barcode", barcode_input);
                 intent.setFlags(0);
-                getActivity().setResult(1000, intent);
-                getActivity().finish();
+                setResult(1000, intent, true);
             }
             if ( modality.equals("annulla_multi") ){
                 multiBarcode();
                 intent.putStringArrayListExtra("barcode", barcode_value_list);
-                getActivity().setResult(1000, intent);
+                setResult(1000, intent, false);
             }
 
             if ( modality.equals("recapito_da_effettuare_single") ){
@@ -346,26 +402,24 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
             if ( modality.equals("recapito_da_effettuare_multi") ){
                 multiBarcode();
                 intent.putStringArrayListExtra("barcode", barcode_value_list);
-                getActivity().setResult(1002, intent);
+                setResult(1002, intent, false);
             }
             if ( modality.equals("posta_tracciata") ){
                 multiBarcodeFineGiornata();
                 intent.putStringArrayListExtra("barcode", barcode_value_list_fine_giornata);
-                getActivity().setResult(600, intent);
+                setResult(600, intent, false);
             }
             if ( modality.equals("posta_massiva") ){
                 multiBarcodeFineGiornata();
                 intent.setFlags(0);
                 intent.putStringArrayListExtra("barcode", barcode_value_list_fine_giornata);
-                getActivity().setResult(Integer.parseInt(statusID), intent);
-                //getActivity().finish();
+                setResult(Integer.parseInt(statusID), intent, false);
             }
             if ( modality.equals("posta_massiva_distinta") ){
 
                 intent.putExtra("barcode", barcode_input);
                 intent.setFlags(0);
-                getActivity().setResult(991, intent);
-                getActivity().finish();
+                setResult(991, intent, true);
 
                 /*multiBarcodeFineGiornata();
                 intent.setFlags(0);
@@ -577,8 +631,7 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
                                 barcode_value_list.add(barcode_input);
                                 Intent intent = new Intent();
                                 intent.putStringArrayListExtra("barcode", barcode_value_list);
-                                getActivity().setResult(1001, intent);
-                                getActivity().finish();
+                                setResult(1001, intent, true);
                                 return;
                             }
                             barcode_value_list.add(barcode_input);
@@ -618,8 +671,7 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
                             barcode_value_list.add(barcode_input);
                             Intent intent = new Intent();
                             intent.putStringArrayListExtra("barcode", barcode_value_list);
-                            getActivity().setResult(1001, intent);
-                            getActivity().finish();
+                            setResult(1001, intent, true);
                             return;
                         }
                         barcode_value_list.add(barcode_input);
@@ -714,6 +766,8 @@ public class FullscreenScanFragment extends CameraPermissionFragment implements 
         }
     }
 
-
+    public interface ResultListener<T> {
+        void onResult(int code, Intent data, boolean finish, T object);
+    }
 
 }

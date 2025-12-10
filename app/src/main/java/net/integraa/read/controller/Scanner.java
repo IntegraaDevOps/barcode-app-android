@@ -5,6 +5,7 @@ import android.app.Application;
 import net.integraa.read.controller.scanners.BarcodeDefault;
 import net.integraa.read.controller.scanners.BarcodeScanbot;
 import net.integraa.read.controller.interfaces.Barcode;
+import net.integraa.read.controller.scanners.BarcodeScandit;
 
 public class Scanner {
     protected static Application application;
@@ -28,6 +29,9 @@ public class Scanner {
             switch (barcodeType) {
                 case "scanbot":
                     barcode = new BarcodeScanbot();
+                    break;
+                case "scandit":
+                    barcode = new BarcodeScandit();
                     break;
                 default:
                     barcode = new BarcodeDefault();

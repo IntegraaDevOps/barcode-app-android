@@ -22,6 +22,11 @@ public class BarcodeDefault extends Barcode {
     }
 
     @Override
+    public void onDestroy() {
+
+    }
+
+    @Override
     public View getView() {
         DialogHelper.alertWithAction(activity, "", activity.getString(R.string.no_barcode_scanner_available), new DialogInterface.OnClickListener() {
             @Override
@@ -68,4 +73,5 @@ public class BarcodeDefault extends Barcode {
     public void setSound(boolean value) {
 
     }
+
 }

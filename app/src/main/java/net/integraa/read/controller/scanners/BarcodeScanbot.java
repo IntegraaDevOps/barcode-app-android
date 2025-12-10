@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,6 +32,8 @@ import io.scanbot.sdk.barcode.BarcodeScanner;
 import io.scanbot.sdk.barcode.BarcodeScannerConfiguration;
 import io.scanbot.sdk.barcode.BarcodeScannerFrameHandler;
 import io.scanbot.sdk.barcode.BarcodeScannerResult;
+import io.scanbot.sdk.barcode.ui.BarcodeOverlayTextFormat;
+import io.scanbot.sdk.barcode.ui.BarcodePolygonsView;
 import io.scanbot.sdk.barcode.ui.IBarcodeScannerViewCallback;
 import io.scanbot.sdk.barcode_scanner.ScanbotBarcodeScannerSDK;
 import io.scanbot.sdk.barcode_scanner.ScanbotBarcodeScannerSDKInitializer;
@@ -324,6 +327,7 @@ public class BarcodeScanbot extends Barcode {
     @Override
     public View getView() {
         barcodeScannerView = new BarcodeScannerView(activity, null);
+        setZoom(zoom);
         barcodeScanner = new ScanbotBarcodeScannerSDK(activity).createBarcodeScanner();
         applyTypes(types);
         barcodeScannerView.initCamera();
@@ -333,7 +337,7 @@ public class BarcodeScanbot extends Barcode {
                 if (frameHandlerResult instanceof FrameHandlerResult.Success) {
                     FrameHandlerResult.Success<? extends BarcodeScannerResult> res = ((FrameHandlerResult.Success<? extends BarcodeScannerResult>) frameHandlerResult);
                     if(res.getValue()!=null&&res.getValue().getBarcodes()!=null) {
-                        ArrayList<Barcode.Result> results = new ArrayList<>(1);
+                        ArrayList<Barcode.Result> results = new ArrayList<>(res.getValue().getBarcodes().size());
                         for (BarcodeItem item :res.getValue().getBarcodes()) {
                             results.add(new Result(item));
                         }
@@ -355,9 +359,26 @@ public class BarcodeScanbot extends Barcode {
 
             @Override
             public void onCameraOpen() {
+                setZoom(zoom);
                 //barcodeScannerView.getViewController().useFlash(true);
             }
         });
+        /*barcodeScannerView.getSelectionOverlayController().setEnabled(true);
+        barcodeScannerView.getViewController().setBarcodeScanningInterval(0);
+        barcodeScannerView.getViewController().setAutoSnappingEnabled(false);
+        barcodeScannerView.getSelectionOverlayController().setBarcodeAppearanceDelegate(new BarcodePolygonsView.BarcodeAppearanceDelegate() {
+            @NonNull
+            @Override
+            public BarcodePolygonsView.BarcodePolygonStyle getPolygonStyle(@NonNull BarcodePolygonsView.BarcodePolygonStyle barcodePolygonStyle, @NonNull BarcodeItem barcodeItem) {
+                return barcodePolygonStyle.copy(true,false, false,0f,1f, Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN,false);
+            }
+
+            @NonNull
+            @Override
+            public BarcodePolygonsView.BarcodeTextViewStyle getTextViewStyle(@NonNull BarcodePolygonsView.BarcodeTextViewStyle barcodeTextViewStyle, @NonNull BarcodeItem barcodeItem) {
+                return barcodeTextViewStyle.copy(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, BarcodeOverlayTextFormat.CODE, false);
+            }
+        });*/
         return barcodeScannerView;
     }
 
@@ -379,6 +400,14 @@ public class BarcodeScanbot extends Barcode {
             return;
         }
         barcodeScannerView.getViewController().onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(barcodeScannerView==null) {
+            return;
+        }
+        //barcodeScannerView.getViewController().closeCamera();
     }
 
     @Override
@@ -434,6 +463,15 @@ public class BarcodeScanbot extends Barcode {
             return;
         }
         barcodeScannerView.setSoundEffectsEnabled(true);
+    }
+
+    @Override
+    public void setZoom(float value) {
+        super.setZoom(value);
+        if(barcodeScannerView==null) {
+            return;
+        }
+        barcodeScannerView.getCameraConfiguration().setPhysicalZoomRatio(value);
     }
 
     class Result implements Barcode.Result {

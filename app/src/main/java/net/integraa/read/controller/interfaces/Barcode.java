@@ -12,6 +12,7 @@ public abstract class Barcode {
     protected List<Barcode.Type> types=new ArrayList<>(0);
     protected String licenseKey="";
     protected Activity activity=null;
+    protected float zoom=1.0f;
 
     public void addListener(Barcode.ValueListener value) {
         scannedListeners.add(value);
@@ -38,6 +39,7 @@ public abstract class Barcode {
     }
     public abstract void onResume();
     public abstract void onPause();
+    public abstract void onDestroy();
     public abstract View getView();
     public abstract void start();
     public abstract void stop();
@@ -46,6 +48,9 @@ public abstract class Barcode {
     public abstract void resume();
     public abstract void setVibrate(boolean value);
     public abstract void setSound(boolean value);
+    public void setZoom(float value){
+        this.zoom=value;
+    }
 
     public interface Result {
         String getValue();
